@@ -1,0 +1,63 @@
+<web-app>
+  <div>
+    <ul class="nav nav-tabs">
+      <li role="presentation" class={ active:getActiveView().id=='digicomic' }><a href="#"  onclick={ switchToView } widget-id="digicomic">Digital Comic Museum</a></li>
+      <li role="presentation" class={ active:getActiveView().id=='reddit' }><a href="#"  onclick={switchToView} widget-id="reddit">Reddit</a></li>
+    </ul>
+    
+    <digital-comic-museum-widget show={ getActiveView().id==digitalComicWidget.id }></digital-comic-museum-widget>
+    <div show={ getActiveView().id==redditWidget.id } widget="{ redditWidget }">just fo sho'</div>
+  </div>
+  
+  <script>
+    var self = this;
+    self.pages = [];
+    
+    self.getPages = function() {
+      return self.pages;
+    }
+    
+    self.addPage = function(pageObj) {
+      self.pages.push(pageObj);
+      self.update();
+    }
+
+    // widgets
+    var defaultWidget = {
+      id: "ID", 
+      tag: "some-tag",
+      pages: self.getPages()
+    };
+    
+    self.digitalComicWidget = $.extend({}, defaultWidget, {
+      id: "digicomic",
+      tag: "digicomic"
+    });
+    
+    self.redditWidget = $.extend({}, defaultWidget, {
+      id: "reddit",
+      tag: "social-reddit"
+    });
+
+    // views
+    var activeView = null;
+    var views = [self.digitalComicWidget, self.redditWidget];
+
+    var setView = function(id) {
+      activeView = views.filter(function(item){
+        return item.id == id;
+      })[0] || null; 
+    }
+    
+    self.switchToView = function(el) {
+      var wId = $(el.target).attr("widget-id");
+      if (wId) setView(wId);
+    }
+    
+    self.getActiveView = function() {
+      return activeView;
+    }
+    
+    setView("digicomic");
+  </script>
+</web-app>

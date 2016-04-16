@@ -1,0 +1,45 @@
+<widget-form>
+  <div>
+    <div class="row">
+      <div class="col-lg-12">
+        <form name="daform">
+          <div class="form-group">
+            <input name="baseUrl" type="text" class="form-control" placeholder="Base URL">
+            <span class="help-block">Base Url</span>
+          </div>
+          <div class="form-group">
+            <input name="id" type="text" class="form-control" placeholder="ID" value="16132">
+            <span class="help-block">ID: ie PID, CID, DID etc</span>
+          </div>
+          <div class="form-group">
+            <input name="startIdx" type="number" class="form-control" placeholder="Start Idx" value="1">
+            <span class="help-block">Start Idx</span>
+          </div>
+          <div class="form-group">
+            <input name="pages" type="number" class="form-control" placeholder="Number of Pages" value=1>
+            <span class="help-block">Number of Pages</span>
+          </div>
+          <div class="form-group">
+            <button class="btn" onclick={ onSubmit }> Do it. DO IT! </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    var self = this;
+    self.daform["baseUrl"].value = self.opts["baseUrl"] || "";
+    this.onSubmit = function() {
+      if (self.opts["onSubmit"] && typeof self.opts["onSubmit"] == "function") {
+        self.opts["onSubmit"]({
+          baseUrl: self.daform["baseUrl"].value,
+          id: self.daform["id"].value,
+          startIdx: Number(self.daform["startIdx"].value),
+          pages: Number(self.daform["pages"].value)
+        });
+      }
+    }
+  </script>
+
+</widget-form>

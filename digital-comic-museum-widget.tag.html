@@ -1,0 +1,81 @@
+<digital-comic-museum-widget>
+  <div>
+    <h3>Comic Museum</h3>
+    <div id="hidden" style="display:none;"></div>
+    
+    <widget-form on-submit={ onSubmit } base-url="http://digitalcomicmuseum.com/preview/"></widget-form>
+
+    <hr/>
+    
+    <ul id="out"></ul>
+  </div>
+
+  <style>
+    ul#out {
+      padding: 0;
+    }
+
+    ul#out li {
+      float: left;
+      margin-right: 10px;
+      text-align: center;
+      list-style-type: none;
+      padding: 10px;
+      background-color: lightgray;
+      margin-bottom: 10px;
+      max-height: 185px;
+      overflow: hidden;
+    }
+  </style>
+  
+  <script>
+    var self = this;
+    var baseUrl, id, url, startIdx, numOfPages, imageUrl;
+    self.onSubmit = function(formData) {
+      // console.log(formData);
+      baseUrl = formData.baseUrl;
+      id = formData.id;
+      startIdx = formData.startIdx;
+      url = baseUrl + "index.php?did=" + id +  "&page=";
+      numOfPages = formData.pages;
+      getPages();
+    }
+    
+    var getPages = function() {
+      $("#out").html("");
+
+      for(var i=0; i<numOfPages; i++) {
+
+        $("#out").append("<li id='page-" + i + "'><div>" + (i+1) + ".</div><img src='' style='width:100px;'></li>");
+        (function(idx, pageUrl){
+          console.log("getting image from:", idx, pageUrl);
+
+          imageUrl = "";
+          $.get("https://crossorigin.me/" + url + pageUrl, function(data) {
+            var raw = data
+                        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi," ")
+                        .replace(/<head\b[^<]*(?:(?!<\/head>)<[^<]*)*<\/head>/gi," ")
+                        .replace(/<nav\b[^<]*(?:(?!<\/nav>)<[^<]*)*<\/nav>/gi," ")
+                        .replace("<body", "<div")
+                        .replace("<html", "<div");
+      
+            $("#hidden").html(raw);
+            $("#hidden img").each(function(idx, el){
+              if ($(el) && $(el).attr("src") && $(el).attr("src").indexOf("cache") > -1) {
+                imageUrl = baseUrl + $(el).attr("src");
+                return false;
+              }
+            });
+            
+            if (imageUrl) {
+              $($("#page-" + idx + " img")[0]).attr("src",imageUrl);
+            }
+          });
+        })(i, (url + (startIdx+i)));
+      }
+    }
+  </script>
+
+
+
+</digital-comic-museum-widget>
